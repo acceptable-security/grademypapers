@@ -1,0 +1,61 @@
+doctype html
+
+html
+    head
+        block title
+            title Grade My Papers
+            
+        meta(name='viewport', content='width=device-width, initial-scale=1')
+        link(href='static/materialize/css/materialize.css', type='text/css', rel='stylesheet', media='screen,projection')
+        link(href='http://fonts.googleapis.com/css?family=Inconsolata', rel='stylesheet', type='text/css')
+        link(href='http://fonts.googleapis.com/icon?family=Material+Icons', rel='stylesheet')
+        
+    body
+        header
+            nav.light-blue.lighten-1(role="navigation")
+                .nav-wrapper.container
+                    #logo-container
+                        a#logo-container.brand-logo(href="/") Grade My Papers
+                    ul.right.hide-on-med-and-down
+                        if loggedIn
+                            li
+                                a(href="/main") Home
+                            li
+                                a(href="/submit") Submit
+                            li
+                                a(href="/logout") Logout
+                        else
+                            li
+                                a(href="/") Home
+                            li 
+                                a(href="/login") Login
+                    
+                    ul#nav-mobile.side-nav
+                        if loggedIn
+                            li
+                                a(href="/main") Home
+                            li
+                                a(href="/submit") Submit
+                            li
+                                a(href="/logout") Logout
+                        else
+                            li
+                                a(href="/") Home
+                            li 
+                                a(href="/login") Login
+            
+                    a.button-collapse(href="#" data-activates="nav-mobile")
+                        i.material-icons menu
+        
+        main
+            block content
+                h4 404 Page not found
+        
+        footer.page-footer.orange
+            .footer-copyright
+                .container Software by Grade My Papers and CSS by Materialize. Copyright 2015
+                
+        script(type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js")
+        script(type="text/javascript" src="static/materialize/js/materialize.min.js")
+        block customScripts
+            

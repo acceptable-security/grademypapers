@@ -17,7 +17,7 @@ app.use('/main', main);
 app.use('/submit', submit);
 app.use('/view', view);
 
-app.use(express.static('public'));
+app.use('/static', express.static('public'));
 
 var server = app.listen(3000, function () {
     var host = server.address().address;
