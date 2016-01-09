@@ -1,44 +1,53 @@
 var express = require('express');
 var router = express.Router();
 
-// function setupDB(db) {
-//     db.counters.insert({
-//         _id: "userid",
-//         seq: 0
-//     });
-// }
-//
-// function getNextSequence(name) {
-//     var ret = db.counters.findAndModify({
-//         query: { _id: name },
-//         update: { $inc: { seq: 1 } },
-//         new: true
-//     });
-//
-//     return ret.seq;
-// }
-
-//         var salt = crypto.randomBytes(32).toString('base64');
-//         var iters = 10000;
-//         var hash = crypto.pbkdf2Sync(pass, salt, iters, 512);
-//
-//         var id = getNextSequence("userid");
-//
-//         db.users.insertOne({
-//             _id: id,
-//             user: user,
-//             hash: hash,
-//             iters: iters,
-//             salt: salt,
-//             cookie: ""
-//         });
-
 router.get('/', function(req, res) {
-    res.render('register', {});
+    if ( req.signedCookies.cookie !== undefined ) {
+        req.db.users.findOne({ cookie: req.signedCookies.cookie }, function (err, res) {
+            if ( err || !res ) {
+                res.clearCookie('cookie');
+                res.render('register', { loggedIn: false, error: "" });
+
+                return;
+            }
+
+            res.redirect('/main');
+        });
+
+        return;
+    }
+
+    res.render('register', { loggedIn: false, error: "" });
 });
 
 router.post('/', function(req, res) {
-    res.send('register post');
+    var name = req.body.userName;
+    var pass = req.body.pass;
+
+    req.db.users.findOne({ user: name }, function (err, res) {
+        if ( !err || res ) {
+            res.render('register', { loggedIn: false, error: "That username is already in use." });
+            return;
+        }
+
+        var salt = crypto.randomBytes(32).toString('base64');
+        var iters = 10000;
+        var hash = crypto.pbkdf2Sync(pass, salt, iters, 512);
+
+        req.db.users.insertOne({
+            user: name,
+            hash: hash,
+            iters: iters,
+            salt: salt
+        }, function (err, res) {
+            if ( err || !res ) {
+                res.render('register', { loggedIn: false, error: "There was an error creating your account." });
+                return;
+            }
+
+            res.redirect('/login');
+        })
+    });
 });
 
 module.exports = router;

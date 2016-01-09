@@ -13,7 +13,9 @@ router.get('/', function(req, res) {
             }
 
             res.redirect('/main');
-        })
+        });
+
+        return;
     }
 
     res.render('login', { loggedIn: false, error: "" });
@@ -26,20 +28,20 @@ router.post('/', function(req, res) {
     var name = req.body.userName;
     var pass = req.body.pass;
 
-    req.db.users.findOne({ name: name }, function (err, res) {
+    req.db.users.findOne({ user: name }, function (err, res) {
         if ( err || !res ) {
             res.render('login', { loggedIn: false, error: "These credentials don't exist." });
             return;
         }
 
-        var salt = crypto.randomBytes(32).toString('base64');
-        var iters = 10000;
+        var salt = res.salt;
+        var iters = res.iters;
         var hash = crypto.pbkdf2Sync(pass, salt, iters, 512);
 
         if ( res.hash == hash ) {
             var cookie = crypto.randomBytes(32).toString('base64');
 
-            req.db.users.updateOne({ name: name }, { cookie: cookie }, function (err, res) {
+            req.db.users.updateOne({ user: name }, { cookie: cookie }, function (err, res) {
                 if ( err || !res ) {
                     res.render('login', { loggedIn: false, error: "An error has occured logging you in." });
                     return;

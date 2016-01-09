@@ -1,3 +1,6 @@
+var fs = require('fs');
+var crypto = require('crypto');
+
 function getCookieSecret(callback) {
     var file = ".cookiesecret";
 
@@ -12,7 +15,7 @@ function getCookieSecret(callback) {
             else {
                 var secret = crypto.randomBytes(32).toString('base64');
 
-                fs.writeFileSync(file, secret, function (err) {
+                fs.writeFileSync(file, secret, {}, function (err) {
                     if ( err ) throw err;
 
                     callback(null, secret);
@@ -24,5 +27,5 @@ function getCookieSecret(callback) {
 
 module.exports = {
     cookieSecret: getCookieSecret,
-    mongo: "mongodb://localhost:2017/test"
+    mongo: "mongodb://localhost:27017/test"
 };

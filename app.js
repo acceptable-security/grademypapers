@@ -1,12 +1,9 @@
 var express = require('express');
-var cookieParser = require('cookier-parser');
+var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var config = require('./config.js');
 
-var fs = require('fs');
-var crypto = require('crypto');
-
-var mongo = require('mongodb').MongoClient;
+var MongoClient = require('mongodb').MongoClient;
 
 var app = express();
 
@@ -16,6 +13,7 @@ var register = require('./routes/register.js');
 var main = require('./routes/main.js');
 var submit = require('./routes/submit.js');
 var view = require('./routes/view.js');
+var logout = require('./routes/logout.js');
 
 app.set('view engine', 'jade');
 
@@ -41,6 +39,7 @@ app.use('/register', register);
 app.use('/main', main);
 app.use('/submit', submit);
 app.use('/view', view);
+app.use('/logout', logout);
 
 app.use('/static', express.static('public'));
 app.use(bodyParser.json());
