@@ -16,6 +16,8 @@ var view = require('./routes/view.js');
 var logout = require('./routes/logout.js');
 
 app.set('view engine', 'jade');
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 MongoClient.connect(config.mongo, function (err, db) {
     if ( err ) throw err;
@@ -24,30 +26,27 @@ MongoClient.connect(config.mongo, function (err, db) {
         req.db = db;
         next();
     });
-});
 
+    config.cookieSecret(function (err, secret) {
+        if ( err ) throw err;
 
-config.cookieSecret(function (err, secret) {
-    if ( err ) throw err;
+        app.use(cookieParser(secret));
 
-    app.use(cookieParser(secret));
-});
+        app.use('/', index);
+        app.use('/login', login);
+        app.use('/register', register);
+        app.use('/main', main);
+        app.use('/submit', submit);
+        app.use('/view', view);
+        app.use('/logout', logout);
 
-app.use('/', index);
-app.use('/login', login);
-app.use('/register', register);
-app.use('/main', main);
-app.use('/submit', submit);
-app.use('/view', view);
-app.use('/logout', logout);
+        app.use('/static', express.static('public'));
 
-app.use('/static', express.static('public'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+        var server = app.listen(3000, function () {
+            var host = server.address().address;
+            var port = server.address().port;
 
-var server = app.listen(3000, function () {
-    var host = server.address().address;
-    var port = server.address().port;
-
-    console.log('GradeMyPapers listening at http://%s:%s', host, port);
+            console.log('GradeMyPapers listening at http://%s:%s', host, port);
+        });
+    });
 });

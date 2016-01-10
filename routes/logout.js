@@ -2,8 +2,8 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/', function(req, res) {
-    if ( req.signedCookies.cookie !== undefined ) {
-        req.db.users.updateOne({ cookie: req.signedCookies.cookie }, { cookie: "" }, function (err, res) {
+    if ( req.signedCookies !== undefined && req.signedCookies.cookie !== undefined ) {
+        req.db.collection('users').updateOne({ cookie: req.signedCookies.cookie }, { cookie: "" }, function (err, result) {
             res.clearCookie('cookie');
             res.redirect('/');
         });

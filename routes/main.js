@@ -2,13 +2,13 @@ var express = require('express');
 var router = express.Router();
 
 router.get('/', function(req, res) {
-    if ( req.signedCookies.cookie === undefined ) {
+    if ( req.signedCookies === undefined || req.signedCookies.cookie === undefined ) {
         res.redirect('/login');
         return;
     }
 
-    req.db.users.findOne({ cookie: req.signedCookies.cookie }, function (err, res) {
-        if ( err || !res ) {
+    req.db.collection('users').findOne({ cookie: req.signedCookies.cookie }, function (err, result) {
+        if ( err || !result ) {
             res.redirect('/login');
             return;
         }

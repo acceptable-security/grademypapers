@@ -3,8 +3,8 @@ var crypto = require('crypto');
 var router = express.Router();
 
 router.get('/', function(req, res) {
-    if ( req.signedCookies.cookie !== undefined ) {
-        req.db.users.findOne({ cookie: req.signedCookies.cookie }, function (err, res) {
+    if ( req.signedCookies !== undefined && req.signedCookies.cookie !== undefined ) {
+        req.db.collection('users').findOne({ cookie: req.signedCookies.cookie }, function (err, res) {
             if ( err || !res ) {
                 res.clearCookie('cookie');
                 res.render('login', { loggedIn: false, error: "" });
@@ -24,25 +24,25 @@ router.get('/', function(req, res) {
 router.post('/', function(req, res) {
     // should we do something about if they are logged in or not?
     // ignoring for now
-
+    console.log(req.body);
     var name = req.body.userName;
     var pass = req.body.pass;
 
-    req.db.users.findOne({ user: name }, function (err, res) {
-        if ( err || !res ) {
+    req.db.collection('users').findOne({ user: name }, function (err, result) {
+        if ( err || !result ) {
             res.render('login', { loggedIn: false, error: "These credentials don't exist." });
             return;
         }
 
-        var salt = res.salt;
-        var iters = res.iters;
+        var salt = result.salt;
+        var iters = result.iters;
         var hash = crypto.pbkdf2Sync(pass, salt, iters, 512);
 
-        if ( res.hash == hash ) {
+        if ( result.hash == hash ) {
             var cookie = crypto.randomBytes(32).toString('base64');
 
-            req.db.users.updateOne({ user: name }, { cookie: cookie }, function (err, res) {
-                if ( err || !res ) {
+            req.db.collection('users').updateOne({ user: name }, { cookie: cookie }, function (err, result) {
+                if ( err || !result ) {
                     res.render('login', { loggedIn: false, error: "An error has occured logging you in." });
                     return;
                 }
