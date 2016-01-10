@@ -1,0 +1,34 @@
+extends ./root.jade
+
+block title
+    title Grade My Papers - Register
+    
+block content
+    .section
+        .container
+            h4 Login
+            p Please input your login details.
+                if error
+                    span(style="color:red")
+                        b
+                            =error
+            
+            .row
+                form(action="/register" method="POST")
+                    .row
+                        .inputfield.col.m6.s12
+                            input#username.validate(type="text" name="userName")
+                            label(for="username") User Name
+                            
+                        
+                        .inputfield.col.m6.s12
+                            input#password.validate(type="password" name="password")
+                            label(for="password") Password
+                    .row
+                        .inputfield.col.m6.s12.offset-m6
+                            input#password2.validate(type="password" name="password2")
+                            label(for="password2") Retype your Password
+                    
+                    .row
+                        .inputfield.col.m6.s12
+                            button.btn.waves-effect.waves-light(type="submit" name="action") Register

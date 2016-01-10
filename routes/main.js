@@ -3,18 +3,18 @@ var router = express.Router();
 
 router.get('/', function(req, res) {
     if ( req.signedCookies === undefined || req.signedCookies.cookie === undefined ) {
-        res.redirect('/login');
+        res.redirect('/main');
         return;
     }
 
     req.db.collection('users').findOne({ cookie: req.signedCookies.cookie }, function (err, result) {
-        if ( err || !result ) {
-            res.redirect('/login');
+        if ( !result ) {
+            res.redirect('/main');
             return;
         }
 
         /* DATA */
-        res.render('login', { loggedIn: true /* TODO: WORK */ });
+        res.render('main', { loggedIn: true /* TODO: WORK */ });
     });
 });
 

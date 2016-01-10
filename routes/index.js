@@ -8,7 +8,7 @@ router.get('/', function(req, res) {
     }
 
     req.db.collection('users').findOne({ cookie: req.signedCookies.cookie }, function (err, result) {
-        if ( err || !result ) {
+        if ( !result ) {
             res.render('index', { loggedIn: false });
             return;
         }
